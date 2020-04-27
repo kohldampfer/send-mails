@@ -1,6 +1,7 @@
 import termcolor
 
 DEBUG = False
+LISTOFLINKS = "listoflinks.txt"
 
 def printDebug(message):
     if DEBUG == True:
