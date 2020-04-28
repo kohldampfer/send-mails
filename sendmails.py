@@ -64,18 +64,27 @@ def getAllLinks(url):
     printDebug("Try to parse url '{0}'".format(url_to_parse))
     
     if url_to_parse:
+    
+        domain = getDomain(url_to_parse)
+    
         request = urllib.request.Request(url_to_parse,
             headers = {'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.122 Safari/537.36' })
         data = urllib.request.urlopen(request)
         content = data.read()
-        soup = bs4.BeautifulSoup(content, features="lxml")
         
-        links = []
-        for s in soup.find_all('a', href=True):
-            correctedLink = correctLink(url_to_parse, s['href'])
+        if domain == "www.youtube.com" or domain == "youtube.com":
+            yt_links = re.findall("\/watch\?v=[^\"]+", str(content))
+            for yl in yt_links:
+                ALL_LINKS.append("https://youtube.com{0}".format(yl))
+        else:
+            soup = bs4.BeautifulSoup(content, features="lxml")
             
-            if correctedLink and not isLinkInGlobalLinkList(correctedLink):
-                ALL_LINKS.append(correctedLink)
+            links = []
+            for s in soup.find_all('a', href=True):
+                correctedLink = correctLink(url_to_parse, s['href'])
+                
+                if correctedLink and not isLinkInGlobalLinkList(correctedLink):
+                    ALL_LINKS.append(correctedLink)
 
 #
 # this function corrects links found on a webpage.
@@ -117,12 +126,22 @@ def getTitleFromUrl(url):
     stripped_url = url.strip()
     
     if stripped_url:
+        domain = getDomain(stripped_url)
+        
         request = urllib.request.Request(stripped_url,
         headers = {'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.122 Safari/537.36' })
         data = urllib.request.urlopen(request)
         content = data.read()
-        soup = bs4.BeautifulSoup(content, features="lxml")
-        title = soup.find_all('title')[0].text
+        
+        if domain == "www.youtube.com" or domain == "youtube.com":
+            title_search = re.search(r'"title":"[^"]+"', str(content))
+            title = title_search.group(0)
+            title = title.replace("\"title\":\"", "")
+            title = title.replace("\"", "")
+        else:
+            soup = bs4.BeautifulSoup(content, features="lxml")
+            title = soup.find_all('title')[0].text
+        
         return title
     
     return None
@@ -184,14 +203,18 @@ for l_url in list_of_urls:
 #
 if os.path.isfile(LINKSALREADYSENT_FILE):
     LINKSALREADYSENT = readFile(LINKSALREADYSENT_FILE)
+    
+if DEBUG == True:
+    printDebug("Show all found links ...")
+    for l in ALL_LINKS:
+        printDebug("Found link {0}".format(l))
 
 email_counter = 0
 for l in ALL_LINKS:
     try:
         if email_counter < 1:
             if not l in LINKSALREADYSENT:
-                printDebug("Found link {0}".format(l))
-                printDebug("Title is {0}".format(getTitleFromUrl(l)))
+                print("Processing link {0} ...".format(l))
                 # send mail and save it into a file
                 sendMail(l)
                 email_counter = email_counter + 1
