@@ -4,16 +4,33 @@ import bs4
 import urllib.request
 import urllib.parse
 import re
+import email.mime.multipart
+import email.mime.text
+import smtplib
+import os.path
+import configparser
 
 DEBUG = True
 LISTOFLINKS = "listoflinks.txt"
 ALL_LINKS = []
+LINKSALREADYSENT_FILE = "linksalreadysent.txt"
+LINKSALREADYSENT = []
+
+config = configparser.ConfigParser()
+config.read("emailsettings.ini")
+
+_host = config['EmailSettings']['Host']
+_port = config['EmailSettings']['Port']
+_sender = config['EmailSettings']['Sender']
+_receiver = config['EmailSettings']['Receiver']
+_password = config['EmailSettings']['Password']
+smtp_obj = None
 
 def printDebug(message):
     if DEBUG == True:
         print(termcolor.colored("[D] {0}".format(message), 'yellow'))
 
-def readLine(fname):
+def readFile(fname):
     printDebug("Read file '{0}'".format(fname))
     with open(fname) as f:
         lines = f.read().splitlines()
@@ -96,14 +113,94 @@ def correctLink(searchedUrl, foundLink):
     
     return None
 
+def getTitleFromUrl(url):
+    stripped_url = url.strip()
+    
+    if stripped_url:
+        request = urllib.request.Request(stripped_url,
+        headers = {'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.122 Safari/537.36' })
+        data = urllib.request.urlopen(request)
+        content = data.read()
+        soup = bs4.BeautifulSoup(content, features="lxml")
+        title = soup.find_all('title')[0].text
+        return title
+    
+    return None
+
+def sendMail(url):
+    stripped_url = url.strip()
+    
+    if stripped_url:
+        domain = getDomain(stripped_url)
+        title = getTitleFromUrl(stripped_url)
+        
+        msg = email.mime.multipart.MIMEMultipart()
+        msg['From'] = _sender
+        msg['To'] = _receiver
+        msg['Subject'] = "[{0}] {1}".format(domain, title)
+        body = email.mime.text.MIMEText('''
+There is new content on site {0}:
+Title: {1}
+Url: {2}
+'''.format(domain, title, stripped_url))
+
+        msg.attach(body)
+        
+        text = msg.as_string()
+        smtp_obj.sendmail(_sender, _receiver, text)
+        
+        appendToSentLinks(stripped_url)
+
+def appendToSentLinks(url):
+    with open(LINKSALREADYSENT_FILE, "a") as file:
+        file.write("{0}\n".format(url))
+
 #
 # here starts the program
 #
 colorama.init()
 
-list_of_urls = readLine(LISTOFLINKS)
+#
+# login to smtp
+#
+print("Try to get access to SMTP ...")
+printDebug("Host is {0}".format(_host))
+printDebug("Port is {0}".format(_port))
+smtp_obj = smtplib.SMTP(_host, _port)
+smtp_obj.ehlo()
+smtp_obj.starttls()
+smtp_obj.ehlo()
+smtp_obj.login(_sender, _password)
+
+#
+# read file with urls which should be parsed
+#
+list_of_urls = readFile(LISTOFLINKS)
 for l_url in list_of_urls:
     getAllLinks(l_url)
-    
+
+#
+# read file with links, which already were sent
+#
+if os.path.isfile(LINKSALREADYSENT_FILE):
+    LINKSALREADYSENT = readFile(LINKSALREADYSENT_FILE)
+
+email_counter = 0
 for l in ALL_LINKS:
-    printDebug("Found link {0}".format(l))
+    try:
+        if email_counter < 1:
+            if not l in LINKSALREADYSENT:
+                printDebug("Found link {0}".format(l))
+                printDebug("Title is {0}".format(getTitleFromUrl(l)))
+                # send mail and save it into a file
+                sendMail(l)
+                email_counter = email_counter + 1
+    except Exception as e_inner:
+        print("An error occurred.")
+        print(e_inner)
+
+
+print("Close SMTP connection ...")
+smtp_obj.quit()
+
+print("End")

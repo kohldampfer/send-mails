@@ -2,3 +2,4 @@ termcolor
 bs4
 colorama
 lxml
+smtplib
