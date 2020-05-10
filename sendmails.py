@@ -225,7 +225,7 @@ if DEBUG == True:
 email_counter = 0
 for l in ALL_LINKS:
     try:
-        if email_counter < 1:
+        if email_counter < 5:
             if not l in LINKSALREADYSENT:
                 print("Processing link {0} ...".format(l))
                 # send mail and save it into a file
