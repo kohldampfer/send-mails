@@ -108,6 +108,9 @@ def correctLink(searchedUrl, foundLink):
         
     if stripped_found[0:1] == "/":
         stripped_found = "{0}://{1}{2}".format(searched_protocol, searched_domain, foundLink)
+    
+    if not stripped_found[0-7] == "http://" or not stripped_found[0-8] == "https://":
+        stripped_found = "{0}://{1}/{2}".format(searched_protocol, searched_domain, foundLink)
         
     pattern = ""
     if searched_domain == "stackoverflow.com":
@@ -116,6 +119,10 @@ def correctLink(searchedUrl, foundLink):
         pattern = "questions/[0-9]+"
     elif searched_domain == "security.stackexchange.com":
         pattern = "questions/[0-9]+"
+    elif searched_domain == "www.bloggerei.de":
+        pattern = "c.php\?lid=[0-9]+"
+    elif searched_domain == "www.rss-verzeichnis.de":
+        pattern = "[0-9]+[-a-z]+"
     
     if re.search(pattern, stripped_found):
         return stripped_found
