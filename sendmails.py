@@ -119,6 +119,8 @@ def correctLink(searchedUrl, foundLink):
         pattern = "questions/[0-9]+"
     elif searched_domain == "security.stackexchange.com":
         pattern = "questions/[0-9]+"
+    elif searched_domain == "wordpress.stackexchange.com":
+        pattern = "questions/[0-9]+"
     elif searched_domain == "www.bloggerei.de":
         pattern = "c.php\?lid=[0-9]+"
     elif searched_domain == "www.rss-verzeichnis.de":
