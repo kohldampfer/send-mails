@@ -9,12 +9,22 @@ import email.mime.text
 import smtplib
 import os.path
 import configparser
+import argparse
 
 DEBUG = True
 LISTOFLINKS = "listoflinks.txt"
 ALL_LINKS = []
 LINKSALREADYSENT_FILE = "linksalreadysent.txt"
 LINKSALREADYSENT = []
+
+parser = argparse.ArgumentParser(description = '''
+This program extracts urls from given link list and sends new email urls
+to target email address.
+''')
+parser.add_argument("--no-email", 
+    help="Prints only found links. No email will be sent.", 
+    required=False)
+args = parser.parse_args()
 
 config = configparser.ConfigParser()
 config.read("emailsettings.ini")
@@ -110,11 +120,15 @@ def correctLink(searchedUrl, foundLink):
         stripped_found = "{0}://{1}{2}".format(searched_protocol, searched_domain, foundLink)
         
     pattern = ""
-    if searched_domain == "stackoverflow.com":
+    if searched_domain == "stackoverflow.com" or searched_domain == "www.stackoverflow.com":
         pattern = "questions/[0-9]+"
     elif searched_domain == "superuser.com":
         pattern = "questions/[0-9]+"
     elif searched_domain == "security.stackexchange.com":
+        pattern = "questions/[0-9]+"
+    elif searched_domain == "unix.stackexchange.com":
+        pattern = "questions/[0-9]+"
+    elif searched_domain == "askubuntu.com":
         pattern = "questions/[0-9]+"
     
     if re.search(pattern, stripped_found):
@@ -212,11 +226,12 @@ if DEBUG == True:
 email_counter = 0
 for l in ALL_LINKS:
     try:
-        if email_counter < 1:
+        if email_counter < 2:
             if not l in LINKSALREADYSENT:
                 print("Processing link {0} ...".format(l))
                 # send mail and save it into a file
-                sendMail(l)
+                if not args.no_email:
+                    sendMail(l)
                 email_counter = email_counter + 1
     except Exception as e_inner:
         print("An error occurred.")
