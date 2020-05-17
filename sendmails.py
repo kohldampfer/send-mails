@@ -109,6 +109,9 @@ def correctLink(searchedUrl, foundLink):
     if stripped_found[0:1] == "/":
         stripped_found = "{0}://{1}{2}".format(searched_protocol, searched_domain, foundLink)
     
+    if stripped_found[0:1] == "?":
+        stripped_found = "{0}://{1}/{2}".format(searched_protocol, searched_domain, foundLink)
+    
     if not (stripped_found[0-7] == "http://" or not stripped_found[0-8] == "https://"):
         stripped_found = "{0}://{1}/{2}".format(searched_protocol, searched_domain, foundLink)
         
@@ -137,6 +140,10 @@ def correctLink(searchedUrl, foundLink):
         pattern = "[0-9]+/[0-9]+"
     elif searched_domain == "blog.silentsignal.eu":
         pattern = "[0-9]+/[0-9]+/[0-9]+/[a-z0-9]"
+    elif searched_domain == "securitytrails.com":
+        pattern = "/blog/[-a-z0-9]+$"
+    elif searched_domain == "firebounty.com":
+        pattern = "/[0-9]+-"
     
     if re.search(pattern, stripped_found):
         return stripped_found
