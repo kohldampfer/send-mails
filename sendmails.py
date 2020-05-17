@@ -133,6 +133,10 @@ def correctLink(searchedUrl, foundLink):
         pattern = "/blogverzeichnis/"
     elif searched_domain == "www.blogwolke.de":
         pattern = "www.blogwolke.de/[-0-9a-z]+/$"
+    elif searched_domain == "jamesmckay.net":
+        pattern = "[0-9]+/[0-9]+"
+    elif searched_domain == "blog.silentsignal.eu":
+        pattern = "[0-9]+/[0-9]+/[0-9]+/[a-z0-9]"
     
     if re.search(pattern, stripped_found):
         return stripped_found
@@ -229,7 +233,7 @@ if DEBUG == True:
 email_counter = 0
 for l in ALL_LINKS:
     try:
-        if email_counter < 5:
+        if email_counter < 3:
             if not l in LINKSALREADYSENT:
                 print("Processing link {0} ...".format(l))
                 # send mail and save it into a file
