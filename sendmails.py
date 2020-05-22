@@ -155,6 +155,8 @@ def correctLink(searchedUrl, foundLink):
         pattern = "/blog/[-a-z0-9]+$"
     elif searched_domain == "firebounty.com":
         pattern = "/[0-9]+-"
+    elif searched_domain == "www.reddit.com":
+        pattern = "www.reddit.com/r/[a-z0-9]+/comments"
     
     if re.search(pattern, stripped_found):
         return stripped_found
