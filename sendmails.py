@@ -16,6 +16,8 @@ ALL_LINKS = []
 LINKSALREADYSENT_FILE = "linksalreadysent.txt"
 LINKSALREADYSENT = []
 
+DEFAULT_NUM_OF_EMAILS = 1
+
 config = configparser.ConfigParser()
 config.read("emailsettings.ini")
 
@@ -24,7 +26,16 @@ _port = config['EmailSettings']['Port']
 _sender = config['EmailSettings']['Sender']
 _receiver = config['EmailSettings']['Receiver']
 _password = config['EmailSettings']['Password']
+try:
+    _numOfEmails = int(config['EmailSettings']['NumOfEmails'])
+except KeyError:
+    _numOfEmails = DEFAULT_NUM_OF_EMAILS
+except ValueError:
+    _numOfEmails = DEFAULT_NUM_OF_EMAILS
 smtp_obj = None
+
+if _numOfEmails <= 0:
+    _numOfEmails = DEFAULT_NUM_OF_EMAILS
 
 def printDebug(message):
     if DEBUG == True:
@@ -240,7 +251,7 @@ if DEBUG == True:
 email_counter = 0
 for l in ALL_LINKS:
     try:
-        if email_counter < 3:
+        if email_counter < _numOfEmails:
             if not l in LINKSALREADYSENT:
                 print("Processing link {0} ...".format(l))
                 # send mail and save it into a file

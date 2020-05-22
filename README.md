@@ -24,4 +24,10 @@ Port = 587
 Sender = somemail@somehost.ext
 Receiver = someothermail@somehost.ext
 Password = password_of_sender_for_authentication
+NumOfEmails = 3
 ```
+
+## Dedication
+
+I dedicate this project to my love
+[https://familienstellen-freiburg.com/](https://familienstellen-freiburg.com/)
