@@ -223,17 +223,6 @@ def appendToSentLinks(url):
 #
 colorama.init()
 
-#
-# login to smtp
-#
-print("Try to get access to SMTP ...")
-printDebug("Host is {0}".format(_host))
-printDebug("Port is {0}".format(_port))
-smtp_obj = smtplib.SMTP(_host, _port)
-smtp_obj.ehlo()
-smtp_obj.starttls()
-smtp_obj.ehlo()
-smtp_obj.login(_sender, _password)
 
 #
 # read file with urls which should be parsed
@@ -252,6 +241,19 @@ if DEBUG == True:
     printDebug("Show all found links ...")
     for l in ALL_LINKS:
         printDebug("Found link {0}".format(l))
+
+#
+# login to smtp
+#
+print("Try to get access to SMTP ...")
+printDebug("Host is {0}".format(_host))
+printDebug("Port is {0}".format(_port))
+smtp_obj = smtplib.SMTP(_host, _port)
+smtp_obj.ehlo()
+smtp_obj.starttls()
+smtp_obj.ehlo()
+smtp_obj.login(_sender, _password)
+
 
 email_counter = 0
 for l in ALL_LINKS:
