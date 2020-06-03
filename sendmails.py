@@ -126,7 +126,7 @@ def correctLink(searchedUrl, foundLink):
     if stripped_found[0:1] == "?":
         stripped_found = "{0}://{1}/{2}".format(searched_protocol, searched_domain, foundLink)
     
-    if not (stripped_found[0-7] == "http://" or not stripped_found[0-8] == "https://"):
+    if not (stripped_found[0:7] == "http://" or stripped_found[0:8] == "https://"):
         stripped_found = "{0}://{1}/{2}".format(searched_protocol, searched_domain, foundLink)
         
     pattern = ""
@@ -160,6 +160,8 @@ def correctLink(searchedUrl, foundLink):
         pattern = "/[0-9]+-"
     elif searched_domain == "www.reddit.com":
         pattern = "www.reddit.com/r/[a-z0-9]+/comments"
+    elif searched_domain == "www.root-me.org":
+        pattern = "[a-z]+/Challenges/[-a-zA-Z0-9]+/[-a-zA-Z0-9]+"
     
     if re.search(pattern, stripped_found):
         return stripped_found
