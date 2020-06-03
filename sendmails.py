@@ -161,7 +161,7 @@ def correctLink(searchedUrl, foundLink):
     elif searched_domain == "www.reddit.com":
         pattern = "www.reddit.com/r/[a-z0-9]+/comments"
     elif searched_domain == "www.root-me.org":
-        pattern = "[a-z]+/Challenges/[-a-zA-Z0-9]+/[-a-zA-Z0-9]+"
+        pattern = "[a-z]+/Challenges/[-a-zA-Z0-9]+/[-a-zA-Z0-9]+$"
     
     if re.search(pattern, stripped_found):
         return stripped_found
