@@ -162,6 +162,10 @@ def correctLink(searchedUrl, foundLink):
         pattern = "www.reddit.com/r/[a-z0-9]+/comments"
     elif searched_domain == "www.root-me.org":
         pattern = "[a-z]+/Challenges/[-a-zA-Z0-9]+/[-a-zA-Z0-9]+$"
+    elif searched_domain == "www.jungewelt.de":
+        pattern = "/(artikel|beilage/art)/[0-9]+"
+    elif searched_domain == "honoki.net":
+        pattern = "/[0-9]+/[0-9]+/[0-9]+/[^#]+/$"
     
     if re.search(pattern, stripped_found):
         return stripped_found
