@@ -166,6 +166,14 @@ def correctLink(searchedUrl, foundLink):
         pattern = "/(artikel|beilage/art)/[0-9]+"
     elif searched_domain == "honoki.net":
         pattern = "/[0-9]+/[0-9]+/[0-9]+/[^#]+/$"
+    elif searched_domain == "blog.secureideas.com":
+        pattern = "/[0-9]+/[0-9]+/.+"
+    elif searched_domain == "research.securitum.com":
+        pattern = "research.securitum.com/[^/]+/$"
+    elif searched_domain == "blog.compass-security.com":
+        pattern = "/[0-9]+/[0-9]+/.*"
+    elif searched_domain == "blog.securitybreached.org":
+        pattern = "/[0-9]+/[0-9]+/[0-9]+/.+/$"
     
     if re.search(pattern, stripped_found):
         return stripped_found
