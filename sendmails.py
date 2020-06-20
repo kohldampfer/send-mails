@@ -140,6 +140,8 @@ def correctLink(searchedUrl, foundLink):
         pattern = "wordpress.stackexchange.com/questions/[0-9]+"
     elif searched_domain == "unix.stackexchange.com":
         pattern = "unix.stackexchange.com/questions/[0-9]+"
+    elif searched_domain == "devops.stackexchange.com":
+        pattern = "devops.stackexchange.com/questions/[0-9]+"
     elif searched_domain == "askubuntu.com":
         pattern = "askubuntu.com/questions/[0-9]+"
     elif searched_domain == "www.bloggerei.de":
@@ -174,6 +176,20 @@ def correctLink(searchedUrl, foundLink):
         pattern = "/[0-9]+/[0-9]+/.*"
     elif searched_domain == "blog.securitybreached.org":
         pattern = "/[0-9]+/[0-9]+/[0-9]+/.+/$"
+    elif searched_domain == "www.jenkins.io":
+        pattern = "/[0-9]+/[0-9]+/[0-9]+"
+    elif searched_domain == "www.edureka.co":
+        pattern = "/blog/"
+    elif searched_domain == "discuss.kubernetes.io":
+        pattern = "discuss.kubernetes.io/t/[-a-zA-Z0-9]+/[0-9]+"
+    elif searched_domain == "sharepointoscar.com":
+        pattern = "/[0-9]+-[0-9]+-[0-9]+.+"
+    elif searched_domain == "www.freitag.de":
+        pattern = "/autoren/[^/]+/[^/#]+$"
+    elif searched_domain == "oxiblog.de":
+        pattern = "oxiblog.de/[^/]+/$"
+    elif searched_domain == "cd.foundation":
+        pattern = "/blog/[0-9]+/[0-9]+/[0-9]+/"
     
     if re.search(pattern, stripped_found):
         return stripped_found
