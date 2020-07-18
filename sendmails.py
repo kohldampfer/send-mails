@@ -198,6 +198,10 @@ def correctLink(searchedUrl, foundLink):
         pattern = "dgtsec.com/[^/]+/$"
     elif searched_domain == "blog.intigriti.com":
         pattern = "blog.intigriti.com/[0-9]+/[0-9]+/[0-9]+"
+    elif searched_domain == "www.jasveermaan.com":
+        pattern = "/[0-9]+/[0-9]+/[0-9]+/[^/]+/$"
+    elif searched_domain == "blog.skullsecurity.org":
+        pattern = "/[0-9]+/[^#]+$"
     
     if re.search(pattern, stripped_found):
         return stripped_found
