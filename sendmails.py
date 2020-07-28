@@ -173,7 +173,7 @@ def correctLink(searchedUrl, foundLink):
     elif searched_domain == "research.securitum.com":
         pattern = "research.securitum.com/[^/]+/$"
     elif searched_domain == "blog.compass-security.com":
-        pattern = "/[0-9]+/[0-9]+/.*"
+        pattern = "/[0-9]+/[0-9]+/[^/]+/$"
     elif searched_domain == "blog.securitybreached.org":
         pattern = "/[0-9]+/[0-9]+/[0-9]+/.+/$"
     elif searched_domain == "www.jenkins.io":
@@ -202,6 +202,8 @@ def correctLink(searchedUrl, foundLink):
         pattern = "/[0-9]+/[0-9]+/[0-9]+/[^/]+/$"
     elif searched_domain == "blog.skullsecurity.org":
         pattern = "/[0-9]+/[^#]+$"
+    elif searched_domain == "www.harmj0y.net":
+        pattern = "/blog/[-a-z0-9]+/[-a-z0-9]+/$"
     
     if re.search(pattern, stripped_found):
         return stripped_found
