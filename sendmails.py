@@ -204,6 +204,16 @@ def correctLink(searchedUrl, foundLink):
         pattern = "/[0-9]+/[^#]+$"
     elif searched_domain == "www.harmj0y.net":
         pattern = "/blog/[-a-z0-9]+/[-a-z0-9]+/$"
+    elif searched_domain == "carnal0wnage.attackresearch.com":
+        pattern = "[0-9]+/[0-9]+/[^\.]+\.html"
+    elif searched_domain == "www.vulnhub.com":
+        pattern = "/entry/"
+    elif searched_domain == "wordpress.org":
+        pattern = "/plugins/"
+    elif searched_domain == "touhidshaikh.com":
+        pattern = "/blog]/[0-9]+/[0-9]+/[^/]+"
+    elif searched_domain == "github.com":
+        pattern = "github.com/[^\?]+/[^\?]+"
     
     if re.search(pattern, stripped_found):
         return stripped_found
