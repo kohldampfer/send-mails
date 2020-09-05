@@ -120,6 +120,11 @@ def correctLink(searchedUrl, foundLink):
     if stripped_found[0:11] == "javascript:":
         return None
         
+    # skip several domains
+    if searched_domain == "twitter.com" or\
+        searched_domain == "linkedin.com":
+        return None
+        
     if stripped_found[0:1] == "/":
         stripped_found = "{0}://{1}{2}".format(searched_protocol, searched_domain, foundLink)
     
@@ -207,7 +212,7 @@ def correctLink(searchedUrl, foundLink):
     elif searched_domain == "carnal0wnage.attackresearch.com":
         pattern = "[0-9]+/[0-9]+/[^\.]+\.html"
     elif searched_domain == "www.vulnhub.com":
-        pattern = "/entry/"
+        pattern = "/entry/[^#/]+/$"
     elif searched_domain == "wordpress.org":
         pattern = "/plugins/"
     elif searched_domain == "touhidshaikh.com":
