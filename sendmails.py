@@ -97,6 +97,33 @@ def getAllLinks(url):
             for s in soup.find_all('a', href=True):
                 correctedLink = correctLink(url_to_parse, s['href'])
                 
+                if correctedLink is None:
+                    continue
+                
+                # no links with mailto: in 
+                if "mailto:" in correctedLink:
+                    continue
+                
+                # no links ending with ".jpg"
+                if correctedLink[-4:] == ".jpg":
+                    continue
+
+                if "https://linkedin.com/" in correctedLink:
+                    continue
+
+                # do not send links where sone has to share a link
+                if "www.facebook.com/sharer.php?" in correctedLink:
+                    continue
+
+                if "plus.google.com/share?" in correctedLink:
+                    continue
+
+                if "linkedin.com/shareArticle?" in correctedLink:
+                    continue
+
+                if "www.reddit.com/submit?" in correctedLink:
+                    continue
+                
                 if correctedLink and not isLinkInGlobalLinkList(correctedLink):
                     ALL_LINKS.append(correctedLink)
 
@@ -118,11 +145,6 @@ def correctLink(searchedUrl, foundLink):
         return None
         
     if stripped_found[0:11] == "javascript:":
-        return None
-        
-    # skip several domains
-    if searched_domain == "twitter.com" or\
-        searched_domain == "linkedin.com":
         return None
         
     if stripped_found[0:1] == "/":
@@ -219,6 +241,10 @@ def correctLink(searchedUrl, foundLink):
         pattern = "/blog]/[0-9]+/[0-9]+/[^/]+"
     elif searched_domain == "github.com":
         pattern = "github.com/[^\?]+/[^\?]+"
+    elif searched_domain == "shubs.io":
+        pattern = "shubs.io/[^/]+/$"
+    elif searched_domain == "blog.anantshri.info":
+        pattern = "/$"
     
     if re.search(pattern, stripped_found):
         return stripped_found
@@ -241,9 +267,18 @@ def getTitleFromUrl(url):
             title = title_search.group(0)
             title = title.replace("\"title\":\"", "")
             title = title.replace("\"", "")
+        elif domain == "twitter.com" or domain == "www.twitter.com":
+            title = stripped_url
+        elif stripped_url[-4:] == ".pdf":
+            title = stripped_url
+        elif stripped_url[-4:] == ".txt":
+            title = stripped_url
         else:
-            soup = bs4.BeautifulSoup(content, features="lxml")
-            title = soup.find_all('title')[0].text
+            try:
+                soup = bs4.BeautifulSoup(content, features="lxml")
+                title = soup.find_all('title')[0].text
+            except IndexError:
+                title = stripped_url
         
         return title
     
