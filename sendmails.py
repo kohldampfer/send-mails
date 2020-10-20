@@ -80,9 +80,13 @@ def getAllLinks(url):
     
         request = urllib.request.Request(url_to_parse,
             headers = {'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.122 Safari/537.36' })
+        
         try:
             data = urllib.request.urlopen(request)
         except urllib.error.HTTPError:
+            return
+        except urllib.error.URLError:
+            print("Couldn't connect to {0}".format(url_to_parse))
             return
         content = data.read()
         
@@ -122,6 +126,24 @@ def getAllLinks(url):
                     continue
 
                 if "www.reddit.com/submit?" in correctedLink:
+                    continue
+
+                if correctedLink[-13:] == "/wp-login.php":
+                    continue
+
+                if "https://twitter.com/intent/retweet?" in correctedLink:
+                    continue
+
+                if "https://twitter.com/intent/tweet?" in correctedLink:
+                    continue
+
+                if "https://twitter.com/intent/like?" in correctedLink:
+                    continue
+
+                if "https://developer.android.com" in correctedLink:
+                    continue
+                
+                if "http://192.168." in correctedLink:
                     continue
                 
                 if correctedLink and not isLinkInGlobalLinkList(correctedLink):
@@ -245,7 +267,15 @@ def correctLink(searchedUrl, foundLink):
         pattern = "shubs.io/[^/]+/$"
     elif searched_domain == "blog.anantshri.info":
         pattern = "/$"
-    
+    elif searched_domain == "security.googleblog.com":
+        pattern = "/[0-9]+/[0-9]+/.+"
+    elif searched_domain == "www.zvab.com":
+        pattern = "/servlet/BookDetailsPL\?bi=[0-9]+.*all$"
+    elif searched_domain == "arxiv.org":
+        pattern = "/abs/"
+    elif searched_domain == "klima-luegendetektor.de":
+        pattern = "/[0-9]+/[0-9]+/[0-9]+/"
+
     if re.search(pattern, stripped_found):
         return stripped_found
     
